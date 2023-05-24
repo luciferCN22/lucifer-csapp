@@ -1,3 +1,6 @@
+#ifndef instruction_guard
+#define instruction_guard
+
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -52,5 +55,8 @@ void instruction_cycle();
 
 void mov_reg_reg_handler(uint64_t src , uint64_t dst);
 
+void call_handler(uint64_t src, uint64_t dst);
+
 void add_reg_reg_handler(uint64_t src , uint64_t dst);
 
+#endif

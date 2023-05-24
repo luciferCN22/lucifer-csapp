@@ -1,3 +1,6 @@
+#ifndef register_guard
+#define register_guard
+
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -108,3 +111,4 @@ typedef struct
 
 reg_t reg;
 
+#endif

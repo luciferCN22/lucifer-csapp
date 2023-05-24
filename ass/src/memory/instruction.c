@@ -1,6 +1,8 @@
 #include "instruction.h"
 #include "cpu/mmu.h"
 #include "cpu/register.h"
+#include "memory/dram.h"
+#include <stdio.h>
 static uint64_t decode_od(od_t od){
     if(od.type==IMM){
         return *((uint64_t *)&od.imm);  //imm是有符号数，但是decode解码返回要是无符号数
@@ -62,10 +64,13 @@ void instruction_cycle(){
 
     handler_t handler = handler_table[instr->op];
     handler(src, dst);
+
+    printf("    %s\n",instr->code);
 }
 
 void init_handler_table(){
     handler_table[mov_reg_reg] = &mov_reg_reg_handler;
+    handler_table[call] = &call_handler;
     handler_table[add_reg_reg] = &add_reg_reg_handler;
 }
 
@@ -73,6 +78,14 @@ void mov_reg_reg_handler(uint64_t src , uint64_t dst)
 {
     *(uint64_t *)dst =  *(uint64_t *)src;
     reg.rip = reg.rip+sizeof(inst_t);
+}
+
+void call_handler(uint64_t src, uint64_t dst){
+    //src: imm address of called function
+    reg.rsp = reg.rsp -8;
+    write64bits_dram(va2pa(reg.rsp), reg.rip+sizeof(inst_t));
+
+    reg.rip = src;
 }
 
 void add_reg_reg_handler(uint64_t src , uint64_t dst)
